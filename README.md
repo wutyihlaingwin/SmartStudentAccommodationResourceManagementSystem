@@ -28,6 +28,23 @@ Netbeans
 src/main/java → service implementations  
 src/main/proto → proto definitions  
 
+
+#Project Status
+
+Development in progress.
+
+Completed:
+- Maven project setup
+- pom.xml configuration
+- Proto service definitions
+
+Next steps:
+- Implement Electricity Service
+- Implement Grocery Service
+- Implement Water Service
+- Implement Naming Service
+- Implement Client GUI
+
 #Author
 
 Wut Yi Hlaing Win
