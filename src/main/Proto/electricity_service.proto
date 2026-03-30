@@ -14,7 +14,7 @@ service ElectricityUsageService {
    rpc StreamUsage(ElectricityUsageRequest) returns (stream ElectricityReading) {}
 }
 
-//The request message containing apartment ID of the student
+//the request message containing apartment ID of the student
 message ElectricityUsageRequest {
     string apartmentID = 1;
 }
@@ -25,7 +25,7 @@ message ElectricityUsageResponse {
     string statusMessage = 2;
 }
 
-//The response stream of messages containing current usage value with timestamps.
+//the response stream of messages containing current usage value with timestamps.
 message ElectricityReading {
     double usageValue = 1;
     string timestamp = 2;

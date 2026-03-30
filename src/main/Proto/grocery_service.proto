@@ -24,13 +24,13 @@ message GroceryItemRequest {
   string addedBy = 3;
 }
 
-//The response message containing 
+//the response message containing 
 message GroceryItemResponse {
   bool success = 1;
   string message = 2;
 }
 
-//The request message containing the action type whether add or remove item,name of item and the quantity.
+//the request message containing the action type whether add or remove item,name of item and the quantity.
 message GroceryUpdateRequest {
     string actionType = 1;
     string itemName = 2;
@@ -38,7 +38,7 @@ message GroceryUpdateRequest {
 }
   
 
-//The response message containing the updated grocery list,name of item and quantity.
+//the response message containing the updated grocery list,name of item and quantity.
 message GroceryListResponse {
     repeated string updatedGroceryList = 1;
     string itemName = 2;
