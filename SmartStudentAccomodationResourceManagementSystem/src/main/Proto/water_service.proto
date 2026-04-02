@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "water_serviceProto";
+
+package WaterConsumptionService;
+
+service WaterConsumptionService {
+
+// client Streaming Method
+   rpc UploadWaterUsage(stream WaterUsageReading) returns (WaterUploadSummary) {}
+
+// Unary Method
+   rpc GetDailyWaterSummary(WaterSummaryRequest) returns (WaterSummaryResponse) {}
+}
+
+//the request message of streams containing device ID, amount of water consumed and timestamp.
+message WaterUsageReading {
+    string deviceID = 1;
+    double waterUsed = 2;
+    string time = 3;
+}
+
+//the response message containing total daily usage and advice on usage.
+message WaterUploadSummary {
+    double totalDailyUsage = 1;
+    string advice = 2;
+}
+
+//the request message containing apartment ID.
+message WaterSummaryRequest {
+    string apartmentID = 1;
+}
+
+//the response message containing total usage and the status depending on usage.
+message WaterSummaryResponse {
+    double totalUsage = 1;
+    string usageStatus = 2;
+}

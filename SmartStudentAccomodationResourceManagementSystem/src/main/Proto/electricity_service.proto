@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "electricity_serviceProto";
+
+package ElectricityUsageService;
+
+service ElectricityUsageService {
+
+   // Unary method
+   rpc GetCurrentUsage(ElectricityUsageRequest) returns (ElectricityUsageResponse) {}
+
+   // Server Streaming method
+   rpc StreamUsage(ElectricityUsageRequest) returns (stream ElectricityReading) {}
+}
+
+//the request message containing apartment ID of the student
+message ElectricityUsageRequest {
+    string apartmentID = 1;
+}
+
+//The response message containing the current usage amount and status message
+message ElectricityUsageResponse {
+    double currentUsage = 1;
+    string statusMessage = 2;
+}
+
+//the response stream of messages containing current usage value with timestamps.
+message ElectricityReading {
+    double usageValue = 1;
+    string timestamp = 2;
+}
