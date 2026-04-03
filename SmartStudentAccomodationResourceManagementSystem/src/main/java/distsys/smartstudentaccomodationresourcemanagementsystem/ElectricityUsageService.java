@@ -47,7 +47,14 @@ public class ElectricityUsageService extends ElectricityUsageServiceGrpc.Electri
             Thread.currentThread().interrupt();
         }
     }
+/* UNARY RPC
+	 * client sends apartmentID in the request. The server method also gets input of  a responseObsever
+	 *
 
+	 * the server sends its response using the responseObserver
+	 * Server calculates the current electrictiy usage and returns it with status message whether the usage is within the range or high,etc.
+	 * rpc get(ElectricityUsageRequest) returns (ElectricityUsageResponse) {}
+	 */
     @Override
     public void getCurrentUsage(ElectricityUsageRequest request,
                                 StreamObserver<ElectricityUsageResponse> responseObserver) {
@@ -66,15 +73,23 @@ public class ElectricityUsageService extends ElectricityUsageServiceGrpc.Electri
         double currentUsage = getBaseUsageForApartment(apartmentId);
         String statusMessage = getUsageStatus(currentUsage);
 
+        // create the response object using its builder method and the set methods for each of its attributes
         ElectricityUsageResponse response = ElectricityUsageResponse.newBuilder()
                 .setCurrentUsage(currentUsage)
                 .setStatusMessage(statusMessage)
                 .build();
-
+         // respond to the client using onNext() on the responseObserver
         responseObserver.onNext(response);
+         // tell the client we are done using onComplete() on the responseOberver
         responseObserver.onCompleted();
     }
-
+    
+    /*
+	 * Server streaming operation. client sends ApartmentID requesting
+	 * electricity usage value for every 3 hours interval for the day .server sends back a stream of
+	 * electricity usage in kWh with the timestamps
+	 * rpc streamUsage(ElectricityUsageRequest) returns (stream ElectricityReading) {}
+	 */
     @Override
     public void streamUsage(ElectricityUsageRequest request,
                             StreamObserver<ElectricityReading> responseObserver) {
@@ -93,7 +108,7 @@ public class ElectricityUsageService extends ElectricityUsageServiceGrpc.Electri
         try {
             double baseUsage = getBaseUsageForApartment(apartmentId);
 
-            // 3-hour interval timestamps as per project proposal
+            // 3-hour interval timestamps 
             String[] timestamps = {
                     "09:00",
                     "12:00",
@@ -102,7 +117,7 @@ public class ElectricityUsageService extends ElectricityUsageServiceGrpc.Electri
                     "21:00"
             };
 
-            // Realistic gradual pattern for a student apartment
+            
             double[] increments;
 
             if (apartmentId.equalsIgnoreCase("APT01") || apartmentId.equalsIgnoreCase("A01")) {
@@ -126,10 +141,10 @@ public class ElectricityUsageService extends ElectricityUsageServiceGrpc.Electri
                 System.out.println("Sending reading: " + timestamps[i] + " = " + usageValue + " kWh");
                 responseObserver.onNext(reading);
 
-                // Short delay for demo only
+                // wait for a second
                 Thread.sleep(1500);
             }
-
+            // signal that there are no more responses
             responseObserver.onCompleted();
 
         } catch (InterruptedException e) {
