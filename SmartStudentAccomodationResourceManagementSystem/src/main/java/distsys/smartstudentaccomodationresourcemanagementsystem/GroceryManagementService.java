@@ -44,25 +44,36 @@ public class GroceryManagementService extends GroceryManagementServiceGrpc.Groce
             server.awaitTermination();
 
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             System.out.println("GroceryManagementService could not start: " + e.getMessage());
         } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
             System.out.println("GroceryManagementService interrupted: " + e.getMessage());
         }
     }
-
+/* UNARY RPC
+	 * client sends grocery item name, the quantity and the name of the person who is adding this grocery item in the request. The server method also gets input of  a responseObsever
+	 * 
+	 * the server sends its response with true (if succesfully added)or else false.
+	 * Server replies with the message and returns it 
+	 * rpc addGroceryItem(GrocveryItemRequest) returns (GroceryItemResponse) {}
+	 */
     @Override
     public void addGroceryItem(GroceryItemRequest request, StreamObserver<GroceryItemResponse> responseObserver) {
+        //validate the item add request with the itema name and quantity
         try {
             validateAddRequest(request);
 
             groceryMap.merge(request.getItemName().trim().toLowerCase(), request.getQuantity(), Integer::sum);
 
+        // create the response object using its builder method and the set methods for each of its attributes
             GroceryItemResponse response = GroceryItemResponse.newBuilder()
                     .setSuccess(true)
                     .setMessage(request.getItemName() + " added successfully by " + request.getAddedBy())
                     .build();
-
+        // respond to the client using onNext() on the responseObserver
             responseObserver.onNext(response);
+         // tell the client we are done using onComplete() on the responseOberver
             responseObserver.onCompleted();
 
         } catch (IllegalArgumentException e) {
@@ -72,8 +83,17 @@ public class GroceryManagementService extends GroceryManagementServiceGrpc.Groce
         }
     }
 
+    
+    // Bi-directional streaming operation
+	// client sends a stream of messages with action such as adding or removing along with the grocery item name
+	// server processes each message and returns a response of the live grocery updated list
+	
+	
+	// rpc (GroceryUpdateRequest) returns (GroceryListResponse ) {}
+
     @Override
     public StreamObserver<GroceryUpdateRequest> liveGroceryList(StreamObserver<GroceryListResponse> responseObserver) {
+       // server sets up a new observer that processes each client request when it sees onNext() 
         return new StreamObserver<GroceryUpdateRequest>() {
             @Override
             public void onNext(GroceryUpdateRequest request) {
@@ -120,7 +140,7 @@ public class GroceryManagementService extends GroceryManagementServiceGrpc.Groce
             public void onError(Throwable throwable) {
                 System.out.println("Client error in live grocery list: " + throwable.getMessage());
             }
-
+            //completed too
             @Override
             public void onCompleted() {
                 responseObserver.onCompleted();
